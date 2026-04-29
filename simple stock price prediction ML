@@ -1,0 +1,70 @@
+# Stock price prediction using ML
+# https://www.geeksforgeeks.org/machine-learning/stock-price-prediction-using-machine-learning-in-python/
+
+# libraries!!
+import numpy as np # fast arrays
+import pandas as pd # yay arrays..., analysis tasks
+import matplotlib.pyplot as plt # draw visualisations
+import seaborn as sb # draw visualisations
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from xgboost import XGBClassifier # contains eXtreme Gradient Boosting ML algo, helps achieve high accuracy on predictions
+from sklearn import metrics
+
+import warnings
+warnings.filterwarnings('ignore')
+
+# import Tesla Stock Price dataset
+df = pd.read_csv('Tesla.csv')
+df.head() # first 5 rows
+df.shape # (# rows, # features/columns) should output "(1692, 7)"
+df.describe() # outputs rows: count, mean, std, min, 25%, 50%, 75%, max
+df.info() # gives general info of dataset and features/columns
+
+# EDA - Exploratory Data Analysis: analysing data using visual techniques
+plt.figure(figsize=(15,5))
+plt.plot(df['Close'])
+plt.title('Tesla Close price.', fontsize=15)
+plt.ylabel('Price in dollars.')
+plt.show() # should output upward trend
+
+# check whether 'Close' and 'Adj Close' columns are the same 
+df[df['Close'] == df['Adj Close']].shape # should output "(1692, 7)", so the columns are the same for all rows
+
+# drop column
+df = df.drop(["Adj Close"], axis=1)
+
+# checking for null values
+df.isnull().sum() # should output 0 for all features/columns
+
+# draw distribution plot for continuous features
+features = ['Open', 'High', 'Low', 'Close', 'Volume']
+
+plt.subplots(figsize=(20,10))
+
+for i, col in enumerate(features):
+    plt.subplot(2,3,i+1) # 2 rows, 3 col of graphs. index 0+1, 1+1, etc.
+    sb.distplot(df[col])
+plt.show() # should output 5 column graphs w polygon for each feature
+
+# boxplots
+plt.subplot(figsize=(20,10))
+for i, col in enumerate(features):
+    plt.subplot(2,3,i+1)
+    sb.boxplot(df[col])
+plt.show() # five boxplots, volume should have a lot of outliers
+
+# feature engineering 
+splitted = df['Date'].str.split('/', expand=True)
+
+df['day'] = splitted[1].astype('int')
+df['month'] = splitted[0].astype('int')
+df['year'] = splitted[2].astype('int')
+
+df.head()
+
+df['is_quarter_end'] = np.where(df['month']%3==0,1,0) # quarterly results feature
+df.head()
