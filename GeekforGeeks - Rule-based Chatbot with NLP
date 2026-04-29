@@ -1,0 +1,41 @@
+# geekforgeeks - building rule based chatbot with nlp
+# https://www.geeksforgeeks.org/nlp/building-a-rule-based-chatbot-with-natural-language-processing/
+
+import nltk 
+import re  # for regular expressions, help in matching patterns in user input
+from nltk.chat.util import Chat, reflections # NLTK class to build rule-based chatbots, dictionary to map pronouns e.g. "I" -> "you"
+
+nltk.download('punkt') # tokenisation
+nltk.download('averaged_perceptron_tagger') # PoS tagger
+
+# defining patterns and responses
+pairs = [
+    [r"hi|hello|hey", ["Hello! What's up?",
+                        "Hi there! How can I help you?"]],
+    [r"my name is (.*)", ["Hello %1, what would you like to talk about?"]],
+    [r"(.*) your name?", ["Call me Rei!"]],
+    [r"(.*) (help|assist) (.*)", [Sure! Can you give me the details of %3?]],
+    [r"Bye!|Goodbye!", ["Bye! Have a nice day."]]
+]
+
+# chatbot class
+class Chatbot:
+    def __init__(self, pairs):
+        self.chat = Chat(pairs, reflection)
+    def respond(self, user_input):
+        return self.chat.respond(user_input)
+        
+# chatbot interactions function
+def chat_with_bot():
+    print("Hello! Rei at your service. Type 'exit' to end the conversation.")
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() == "exit":
+            print("Chatbot: Goodbye! Have a nice day!")
+            break
+        response = chatbot.respond(user.input)
+        print(f"Chatbot: {response}")
+
+# initialise the chatbot / instantiate chatbot class
+chatbot = Chatbot(pairs)
+chat_with_bot()
